@@ -63,8 +63,8 @@ The system consists of two main components:
 
 Clone the repository:
 ```bash
-git clone https://github.com/filmcademy/resolve-mcp.git
-cd resolve-mcp
+git clone https://github.com/filmcademy/davinci-resolve-mcp.git
+cd davinci-resolve-mcp
 ```
 
 Install the package:
@@ -120,17 +120,17 @@ You can start the DaVinci Resolve MCP server using the following methods:
 
 Using uvx (recommended):
 ```bash
-uvx resolve-mcp
+uvx davinci-resolve-mcp
 ```
 
 If you installed the package globally:
 ```bash
-resolve-mcp
+davinci-resolve-mcp
 ```
 
 Or directly with Python:
 ```bash
-cd /path/to/resolve-mcp
+cd /path/to/davinci-resolve-mcp
 python -m davinci_mcp.server
 ```
 
@@ -147,7 +147,7 @@ All methods accept the same arguments:
 
 For example:
 ```bash
-uvx resolve-mcp --host 0.0.0.0 --port 8000
+uvx davinci-resolve-mcp --host 0.0.0.0 --port 8000
 ```
 
 ### Using with Claude
