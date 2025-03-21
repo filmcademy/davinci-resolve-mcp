@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-resolve-mcp = "resolve_mcp.server:main"
+resolve-mcp = "davinci_resolve_mcp.server:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
