@@ -1,0 +1,22 @@
+version = 1
+revision = 1
+requires-python = ">=3.8"
+
+[[package]]
+name = "resolve-mcp"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "mcp", extra = ["cli"] },
+    { name = "asyncio" },
+    { name = "pathlib" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "mcp", extras = ["cli"], specifier = ">=1.5.0" },
+    { name = "asyncio", specifier = ">=3.4.3" },
+    { name = "pathlib", specifier = ">=1.0.1" },
+]
+
+# Rest of the packages would follow here, similar to blender-mcp/uv.lock
