@@ -110,6 +110,7 @@ class DaVinciConnection:
             
             # Execute different commands based on the command_type
             if command_type == "get_project_info":
+                print("get_project_info")
                 result = self._get_project_info()
             elif command_type == "get_timeline_info":
                 result = self._get_timeline_info(params.get("name") if params else None)
@@ -204,19 +205,65 @@ class DaVinciConnection:
         """Get information about the current project"""
         project = self.project
         
+        print("project", project)
         if not project:
             raise Exception("No project is currently open")
         
+        print("project.GetName()", project.GetName())
+        
+        # Get timeline count using the correct API method
+        try:
+            timeline_count = project.GetTimelineCount()
+            print("GetTimelineCount successful", timeline_count)
+        except Exception as e:
+            print(f"Error in GetTimelineCount: {str(e)}")
+            timeline_count = 0
+        
+        # Get all timelines by index
+        timelines = []
+        try:
+            for i in range(1, timeline_count + 1):  # API indexes start at 1
+                timeline = project.GetTimelineByIndex(i)
+                if timeline:
+                    timelines.append(timeline.GetName())
+            print("Timelines retrieved successfully", timelines)
+        except Exception as e:
+            print(f"Error getting timelines by index: {str(e)}")
+            
+        try:
+            current_timeline = project.GetCurrentTimeline()
+            print("GetCurrentTimeline successful", current_timeline)
+            current_timeline_name = current_timeline.GetName() if current_timeline else None
+        except Exception as e:
+            print(f"Error in GetCurrentTimeline: {str(e)}")
+            current_timeline_name = None
+            
+        try:
+            frame_rate = project.GetSetting("timelineFrameRate") 
+            print("GetSetting timelineFrameRate successful", frame_rate)
+        except Exception as e:
+            print(f"Error in GetSetting timelineFrameRate: {str(e)}")
+            frame_rate = None
+            
+        try:
+            width = project.GetSetting("timelineResolutionWidth")
+            height = project.GetSetting("timelineResolutionHeight")
+            print("GetSetting resolution successful", width, height)
+        except Exception as e:
+            print(f"Error in GetSetting resolution: {str(e)}")
+            width = height = None
+        
+        # Return a more robust result that handles potential errors
         result = {
             "name": project.GetName(),
-            "timeline_count": len(project.GetTimelineNames()),
-            "timelines": project.GetTimelineNames(),
-            "current_timeline": project.GetCurrentTimeline().GetName() if project.GetCurrentTimeline() else None,
-            "frame_rate": project.GetSetting("timelineFrameRate"),
+            "timeline_count": timeline_count,
+            "timelines": timelines,
+            "current_timeline": current_timeline_name,
+            "frame_rate": frame_rate,
             "resolution": {
-                "width": project.GetSetting("timelineResolutionWidth"),
-                "height": project.GetSetting("timelineResolutionHeight")
-            }
+                "width": width,
+                "height": height
+            } if width and height else {}
         }
         return result
         
@@ -224,8 +271,17 @@ class DaVinciConnection:
         """Get information about a timeline"""
         if timeline_name:
             # Try to find the named timeline
-            timeline_names = self.project.GetTimelineNames()
-            if timeline_name not in timeline_names:
+            timeline_count = self.project.GetTimelineCount()
+            found_timeline = None
+            
+            # Search for the timeline by name
+            for i in range(1, timeline_count + 1):
+                timeline = self.project.GetTimelineByIndex(i)
+                if timeline and timeline.GetName() == timeline_name:
+                    found_timeline = timeline
+                    break
+            
+            if not found_timeline:
                 raise Exception(f"Timeline not found: {timeline_name}")
             
             self.project.SetCurrentTimeline(timeline_name)
